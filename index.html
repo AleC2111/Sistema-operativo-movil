@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mobile OS Simulator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="device-frame">
+    <div class="screen" id="screen">
+      
+      <!-- Lock Screen -->
+      <div id="lock-screen" class="lock-screen active">
+        <div class="lock-clock-container">
+          <div id="lock-clock">12:00</div>
+          <div id="lock-date">Monday, 1 Jan</div>
+        </div>
+        <div class="lock-notifications">
+          <div class="lock-notif" style="display:none;" id="lock-notif-msg">
+            <span class="icon">💬</span> New message
+          </div>
+        </div>
+        <div class="lock-pin-container hidden" id="lock-pin-container">
+          <input type="password" id="lock-pin-input" placeholder="Enter PIN" maxlength="4" readonly>
+          <div class="pin-pad">
+            <button class="pin-btn">1</button><button class="pin-btn">2</button><button class="pin-btn">3</button>
+            <button class="pin-btn">4</button><button class="pin-btn">5</button><button class="pin-btn">6</button>
+            <button class="pin-btn">7</button><button class="pin-btn">8</button><button class="pin-btn">9</button>
+            <button class="pin-btn pin-clear">C</button><button class="pin-btn">0</button><button class="pin-btn pin-enter">OK</button>
+          </div>
+        </div>
+        <div class="lock-swipe-text" id="lock-swipe-text">Swipe up to unlock</div>
+      </div>
+
+      <!-- Status Bar -->
+      <div class="status-bar" id="status-bar" style="cursor: pointer;" title="Double click to lock">
+        <div class="status-left">
+          <span id="clock">12:00</span>
+        </div>
+        <div class="status-right">
+          <span class="icon" id="network-icon">📶</span>
+          <span class="icon" id="battery-icon">🔋</span>
+          <span id="battery-text">100%</span>
+        </div>
+      </div>
+
+      <!-- Home Screen (Launcher) -->
+      <div class="app-view active" id="home-screen">
+        <div class="launcher-grid">
+          <div class="app-icon" data-app="phone">
+            <div class="icon-bg" style="background: #27ae60;">📞</div>
+            <span>Phone</span>
+          </div>
+          <div class="app-icon" data-app="messages">
+            <div class="icon-bg" style="background: #3498db;">💬</div>
+            <span>Messages</span>
+          </div>
+          <div class="app-icon" data-app="settings">
+            <div class="icon-bg" style="background: #555;">⚙️</div>
+            <span>Settings</span>
+          </div>
+          <div class="app-icon" data-app="file-explorer">
+            <div class="icon-bg" style="background: #f1c40f;">📁</div>
+            <span>Files</span>
+          </div>
+          <div class="app-icon" data-app="gallery">
+            <div class="icon-bg" style="background: #e74c3c;">🖼️</div>
+            <span>Gallery</span>
+          </div>
+          <div class="app-icon" data-app="camera">
+            <div class="icon-bg" style="background: #2ecc71;">📷</div>
+            <span>Camera</span>
+          </div>
+          <div class="app-icon" data-app="browser">
+            <div class="icon-bg" style="background: #3498db;">🌐</div>
+            <span>Browser</span>
+          </div>
+          <div class="app-icon" data-app="whatsapp-web">
+            <div class="icon-bg" style="background: #25d366;">💬</div>
+            <span>WhatsApp</span>
+          </div>
+          <div class="app-icon" data-app="contacts">
+            <div class="icon-bg" style="background: #e67e22;">📇</div>
+            <span>Contacts</span>
+          </div>
+          <div class="app-icon" data-app="music">
+            <div class="icon-bg" style="background: #9b59b6;">🎵</div>
+            <span>Music</span>
+          </div>
+          <div class="app-icon" data-app="clock">
+            <div class="icon-bg" style="background: #1abc9c;">⏰</div>
+            <span>Clock</span>
+          </div>
+          <div class="app-icon" data-app="calculator">
+            <div class="icon-bg" style="background: #e67e22;">🧮</div>
+            <span>Calc</span>
+          </div>
+          <div class="app-icon" data-app="calendar">
+            <div class="icon-bg" style="background: #3498db;">📅</div>
+            <span>Calendar</span>
+          </div>
+          <div class="app-icon" data-app="dev-options">
+            <div class="icon-bg" style="background: #34495e;">📊</div>
+            <span>Dev Opts</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Applications Container -->
+      <div id="apps-container">
+        <!-- Apps will be instantiated here as DOM elements -->
+      </div>
+      
+      <!-- OS Overlay (for Low Battery warnings etc) -->
+      <div id="os-overlay" class="hidden">
+        <div class="toast" id="toast-message"></div>
+      </div>
+
+      <!-- Gesture Bar -->
+      <div class="gesture-bar" id="gesture-bar"></div>
+
+    </div>
+  </div>
+
+  <script src="js/os-core.js"></script>
+  <script src="js/apps.js"></script>
+  <script src="js/renderer.js"></script>
+</body>
+</html>
