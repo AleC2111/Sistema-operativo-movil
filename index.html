@@ -1,17 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Mobile OS Simulator</title>
+  <title>FlowerOS Mobile</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
   <div class="device-frame">
+    <!-- Physical Side Buttons -->
+    <div class="physical-btn power-btn" id="physical-power-btn" title="Presionar para menú de encendido / mantener para bloquear"></div>
+    <div class="physical-btn vol-up-btn" id="physical-vol-up" title="Volumen +"></div>
+    <div class="physical-btn vol-down-btn" id="physical-vol-down" title="Volumen -"></div>
+
     <div class="screen" id="screen">
+      <!-- Wallpaper Decorative Flower Shapes Layer -->
+      <div id="wallpaper-shapes-layer" class="wallpaper-shapes-layer"></div>
       
       <!-- Lock Screen -->
       <div id="lock-screen" class="lock-screen active">
+        <div class="lock-brand">🌸 FlowerOS</div>
         <div class="lock-clock-container">
           <div id="lock-clock">12:00</div>
           <div id="lock-date">Monday, 1 Jan</div>
@@ -30,78 +38,94 @@
             <button class="pin-btn pin-clear">C</button><button class="pin-btn">0</button><button class="pin-btn pin-enter">OK</button>
           </div>
         </div>
-        <div class="lock-swipe-text" id="lock-swipe-text">Swipe up to unlock</div>
+        <div class="lock-swipe-text" id="lock-swipe-text">Desliza hacia arriba para desbloquear</div>
       </div>
 
       <!-- Status Bar -->
-      <div class="status-bar" id="status-bar" style="cursor: pointer;" title="Double click to lock">
+      <div class="status-bar" id="status-bar">
         <div class="status-left">
           <span id="clock">12:00</span>
+          <span class="icon hidden" id="saver-icon" title="Ahorro de Energía Activo">🍃</span>
+        </div>
+        <div class="status-center">
+          <span class="status-brand">🌸 FlowerOS</span>
         </div>
         <div class="status-right">
+          <span class="icon" id="gps-icon" title="GPS Activo (Venezuela)">📍</span>
           <span class="icon" id="network-icon">📶</span>
           <span class="icon" id="battery-icon">🔋</span>
-          <span id="battery-text">100%</span>
+          <span id="battery-text">88%</span>
+          <button id="btn-power-menu-trigger" class="status-power-btn" title="Menú de Apagado">⏻</button>
         </div>
       </div>
 
       <!-- Home Screen (Launcher) -->
       <div class="app-view active" id="home-screen">
+        <!-- FlowerOS Header Widget -->
+        <div class="flower-widget">
+          <div class="flower-widget-brand">🌸 FlowerOS</div>
+          <div class="flower-widget-motto">Florece con cada toque 🌺</div>
+        </div>
+
         <div class="launcher-grid">
+          <div class="app-icon" data-app="telegram">
+            <div class="icon-bg" style="background: linear-gradient(135deg, #0088cc, #24a1de);">✈️</div>
+            <span>Telegram</span>
+          </div>
+          <div class="app-icon" data-app="gps">
+            <div class="icon-bg" style="background: linear-gradient(135deg, #e74c3c, #f39c12);">📍</div>
+            <span>GPS Vzla</span>
+          </div>
           <div class="app-icon" data-app="phone">
-            <div class="icon-bg" style="background: #27ae60;">📞</div>
-            <span>Phone</span>
+            <div class="icon-bg" style="background: linear-gradient(135deg, #27ae60, #2ecc71);">📞</div>
+            <span>Teléfono</span>
           </div>
           <div class="app-icon" data-app="messages">
-            <div class="icon-bg" style="background: #3498db;">💬</div>
-            <span>Messages</span>
+            <div class="icon-bg" style="background: linear-gradient(135deg, #e84393, #ff7675);">💬</div>
+            <span>Mensajes</span>
           </div>
           <div class="app-icon" data-app="settings">
-            <div class="icon-bg" style="background: #555;">⚙️</div>
-            <span>Settings</span>
+            <div class="icon-bg" style="background: linear-gradient(135deg, #6c5ce7, #a29bfe);">⚙️</div>
+            <span>Ajustes</span>
           </div>
           <div class="app-icon" data-app="file-explorer">
-            <div class="icon-bg" style="background: #f1c40f;">📁</div>
-            <span>Files</span>
+            <div class="icon-bg" style="background: linear-gradient(135deg, #fdcb6e, #ffeaa7);">📁</div>
+            <span>Archivos</span>
           </div>
           <div class="app-icon" data-app="gallery">
-            <div class="icon-bg" style="background: #e74c3c;">🖼️</div>
-            <span>Gallery</span>
+            <div class="icon-bg" style="background: linear-gradient(135deg, #ff7675, #d63031);">🖼️</div>
+            <span>Galería</span>
           </div>
           <div class="app-icon" data-app="camera">
-            <div class="icon-bg" style="background: #2ecc71;">📷</div>
-            <span>Camera</span>
+            <div class="icon-bg" style="background: linear-gradient(135deg, #00b894, #55efc4);">📷</div>
+            <span>Cámara</span>
           </div>
           <div class="app-icon" data-app="browser">
-            <div class="icon-bg" style="background: #3498db;">🌐</div>
-            <span>Browser</span>
-          </div>
-          <div class="app-icon" data-app="whatsapp-web">
-            <div class="icon-bg" style="background: #25d366;">💬</div>
-            <span>WhatsApp</span>
+            <div class="icon-bg" style="background: linear-gradient(135deg, #0984e3, #74b9ff);">🌐</div>
+            <span>Navegador</span>
           </div>
           <div class="app-icon" data-app="contacts">
-            <div class="icon-bg" style="background: #e67e22;">📇</div>
-            <span>Contacts</span>
+            <div class="icon-bg" style="background: linear-gradient(135deg, #e17055, #fab1a0);">📇</div>
+            <span>Contactos</span>
           </div>
           <div class="app-icon" data-app="music">
-            <div class="icon-bg" style="background: #9b59b6;">🎵</div>
-            <span>Music</span>
+            <div class="icon-bg" style="background: linear-gradient(135deg, #fd79a8, #e84393);">🎵</div>
+            <span>Música</span>
           </div>
           <div class="app-icon" data-app="clock">
-            <div class="icon-bg" style="background: #1abc9c;">⏰</div>
-            <span>Clock</span>
+            <div class="icon-bg" style="background: linear-gradient(135deg, #00cec9, #81ecec);">⏰</div>
+            <span>Reloj</span>
           </div>
           <div class="app-icon" data-app="calculator">
-            <div class="icon-bg" style="background: #e67e22;">🧮</div>
-            <span>Calc</span>
+            <div class="icon-bg" style="background: linear-gradient(135deg, #e17055, #fdcb6e);">🧮</div>
+            <span>Calculadora</span>
           </div>
           <div class="app-icon" data-app="calendar">
-            <div class="icon-bg" style="background: #3498db;">📅</div>
-            <span>Calendar</span>
+            <div class="icon-bg" style="background: linear-gradient(135deg, #a29bfe, #fd79a8);">📅</div>
+            <span>Calendario</span>
           </div>
           <div class="app-icon" data-app="dev-options">
-            <div class="icon-bg" style="background: #34495e;">📊</div>
+            <div class="icon-bg" style="background: linear-gradient(135deg, #2d3436, #636e72);">📊</div>
             <span>Dev Opts</span>
           </div>
         </div>
@@ -112,7 +136,50 @@
         <!-- Apps will be instantiated here as DOM elements -->
       </div>
       
-      <!-- OS Overlay (for Low Battery warnings etc) -->
+      <!-- Power Options Menu Overlay -->
+      <div id="power-menu-modal" class="power-menu-modal hidden">
+        <div class="power-menu-card">
+          <div class="power-menu-header">
+            <span>🌸 FlowerOS Power</span>
+            <button id="btn-close-power-menu" class="power-menu-close">✕</button>
+          </div>
+          <div class="power-menu-grid">
+            <button id="btn-power-lock" class="power-action-btn lock-btn">
+              <span class="power-icon">🔒</span>
+              <span class="power-label">Bloquear</span>
+            </button>
+            <button id="btn-power-restart" class="power-action-btn restart-btn">
+              <span class="power-icon">🔄</span>
+              <span class="power-label">Reiniciar</span>
+            </button>
+            <button id="btn-power-off" class="power-action-btn shutdown-btn">
+              <span class="power-icon">⏻</span>
+              <span class="power-label">Apagar</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- System Reboot Screen -->
+      <div id="reboot-screen" class="system-power-screen hidden">
+        <div class="power-screen-content">
+          <div class="reboot-flower-spinner">🌸</div>
+          <div class="power-screen-title">Reiniciando FlowerOS...</div>
+          <div class="power-screen-subtitle">Optimizando memoria y subsistemas</div>
+        </div>
+      </div>
+
+      <!-- System Power Off Screen -->
+      <div id="powered-off-screen" class="system-power-screen powered-off hidden">
+        <div class="power-screen-content">
+          <div class="power-screen-off-icon">🔌</div>
+          <div class="power-screen-title">FlowerOS Apagado</div>
+          <div class="power-screen-subtitle">Haz clic abajo para encender el dispositivo</div>
+          <button id="btn-turn-on-device" class="btn-turn-on">🌸 Encender FlowerOS</button>
+        </div>
+      </div>
+
+      <!-- OS Overlay (for Toasts) -->
       <div id="os-overlay" class="hidden">
         <div class="toast" id="toast-message"></div>
       </div>

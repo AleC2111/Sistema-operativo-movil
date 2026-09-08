@@ -3,6 +3,7 @@ const path = require('path');
 
 function createWindow() {
   const win = new BrowserWindow({
+    title: 'FlowerOS Mobile',
     width: 450,
     height: 800,
     webPreferences: {
@@ -14,13 +15,15 @@ function createWindow() {
     resizable: true
   });
 
-  // Set session permissions for camera access
+  // Set session permissions for Telegram Web and camera access
   const session = win.webContents.session;
   session.setPermissionRequestHandler((webContents, permission, callback) => {
-    if (permission === 'media' || permission === 'video' || permission === 'audio') {
-      callback(true); // Allow camera and microphone access
+    // Allow camera, microphone, notifications, and media permissions for Telegram WebRTC calls
+    const allowedPermissions = ['media', 'video', 'audio', 'notifications', 'pointerLock', 'fullscreen'];
+    if (allowedPermissions.includes(permission)) {
+      callback(true);
     } else {
-      callback(false); // Deny other permissions
+      callback(true); // Allow by default for full Telegram Web integration
     }
   });
 

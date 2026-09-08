@@ -38,80 +38,153 @@ class App {
 
 class SettingsApp extends App {
   constructor() {
-    super('settings', 'Settings');
+    super('settings', 'Ajustes');
   }
   onLaunch() {
     const settings = window.fileSystem.getSettings();
+    const gps = window.hardwareSensors.getGPS();
+    const cities = window.hardwareSensors.getVenezuelaCities();
+
+    let citiesOptionsHtml = '';
+    for (let cName in cities) {
+      const selected = (gps.city === cName) ? 'selected' : '';
+      citiesOptionsHtml += `<option value="${cName}" ${selected}>📍 ${cName} (${cities[cName].state})</option>`;
+    }
+
     this.content.innerHTML = `
-      <div class="setting-row">
-        <span>Wi-Fi / Data</span>
-        <input type="checkbox" id="setting-wifi" ${window.powerManager.networkActive ? 'checked' : ''}>
+      <div class="flower-about-card">
+        <div class="flower-about-logo">🌸 FlowerOS</div>
+        <div class="flower-about-version">Versión 2.0 (Integración de mensajes y temas)</div>
+        <div class="flower-about-sub">Sistema Operativo Móvil Completo</div>
       </div>
+
+      <div class="settings-section-title">⚡ Control de Energía y Batería</div>
       <div class="setting-row">
-        <span>Battery Saver</span>
+        <span>Ahorro de Batería (🍃)</span>
         <input type="checkbox" id="setting-saver" ${window.powerManager.batterySaver ? 'checked' : ''}>
       </div>
       <div class="setting-row">
-        <span>Brightness</span>
-        <input type="range" class="range-slider" id="setting-brightness" min="0.1" max="1" step="0.1" value="${window.powerManager.brightness}">
+        <span>Cargando Batería (🔌)</span>
+        <input type="checkbox" id="setting-charging" ${window.powerManager.isCharging ? 'checked' : ''}>
+      </div>
+
+      <div class="settings-section-title">⏻ Control del Sistema</div>
+      <div class="power-buttons-row">
+        <button class="btn btn-power-lock" id="btn-settings-lock">🔒 Bloquear</button>
+        <button class="btn btn-power-restart" id="btn-settings-restart">🔄 Reiniciar</button>
+        <button class="btn btn-power-off" id="btn-settings-off">🔌 Apagar</button>
+      </div>
+
+      <div class="settings-section-title">📍 GPS Venezuela</div>
+      <div class="setting-row">
+        <span>Ciudad en Venezuela</span>
+        <select id="setting-gps-city">
+          ${citiesOptionsHtml}
+        </select>
       </div>
       <div class="setting-row">
-        <span>GPS Latitude</span>
-        <input type="text" id="setting-lat" value="${window.hardwareSensors.getGPS().lat}" style="width:80px">
+        <span>Latitud / Longitud</span>
+        <div style="display:flex; gap:5px;">
+          <input type="text" id="setting-lat" value="${gps.lat}" style="width:65px">
+          <input type="text" id="setting-lng" value="${gps.lng}" style="width:65px">
+        </div>
+      </div>
+      <div style="text-align:center; margin-top:8px; margin-bottom:12px;">
+        <button class="btn" id="setting-save-gps">Actualizar Coordenadas GPS</button>
+      </div>
+
+      <div class="settings-section-title">🌸 Personalización y Formas</div>
+      <div class="setting-row">
+        <span>Fondo de Pantalla Floral</span>
+        <select id="setting-wallpaper">
+          <option value="sakura-shapes" ${settings.wallpaper === 'sakura-shapes' ? 'selected' : ''}>🌸 Flores de Cerezo (Formas Vectoriales)</option>
+          <option value="sunflower-shapes" ${settings.wallpaper === 'sunflower-shapes' ? 'selected' : ''}>🌻 Girasol Dorado (Formas Radiales)</option>
+          <option value="lotus-shapes" ${settings.wallpaper === 'lotus-shapes' ? 'selected' : ''}>🪷 Loto Místico (Formas Geométricas)</option>
+          <option value="rose-shapes" ${settings.wallpaper === 'rose-shapes' ? 'selected' : ''}>🌹 Rosa Terciopelo (Espiral Vectorial)</option>
+          <option value="botanical-spectrum" ${settings.wallpaper === 'botanical-spectrum' || settings.wallpaper === 'botanical' ? 'selected' : ''}>🌺 Spectrum FlowerOS (Jardín Completo)</option>
+          <option value="solid-black" ${settings.wallpaper === 'solid-black' ? 'selected' : ''}>🖤 Negro Sólido</option>
+        </select>
       </div>
       <div class="setting-row">
-        <span>GPS Longitude</span>
-        <input type="text" id="setting-lng" value="${window.hardwareSensors.getGPS().lng}" style="width:80px">
-      </div>
-      <div style="text-align:center; margin-top:15px; margin-bottom:15px;">
-        <button class="btn" id="setting-save-gps">Update GPS</button>
-      </div>
-      <div class="setting-row">
-        <span>Lock PIN (4 digits)</span>
-        <input type="password" id="setting-pin" placeholder="None" value="${settings.lockPin}" style="width:60px" maxlength="4">
-      </div>
-      <div class="setting-row">
-        <span>24-Hour Time</span>
-        <input type="checkbox" id="setting-24h" ${settings.use24h ? 'checked' : ''}>
-      </div>
-      <div class="setting-row">
-        <span>Accent Color</span>
+        <span>Color Floral de Acento</span>
         <input type="color" id="setting-color" value="${settings.accentColor}">
       </div>
       <div class="setting-row">
-        <span>Theme</span>
+        <span>Tema del Sistema</span>
         <select id="setting-theme">
-          <option value="dark" ${settings.theme === 'dark' ? 'selected' : ''}>Dark</option>
-          <option value="light" ${settings.theme === 'light' ? 'selected' : ''}>Light</option>
+          <option value="dark" ${settings.theme === 'dark' ? 'selected' : ''}>Oscuro Floral</option>
+          <option value="light" ${settings.theme === 'light' ? 'selected' : ''}>Claro Floral</option>
         </select>
       </div>
+
+      <div class="settings-section-title">⚙️ Conectividad & Reloj</div>
       <div class="setting-row">
-        <span>Wallpaper</span>
-        <select id="setting-wallpaper">
-          <option value="default" ${settings.wallpaper === 'default' ? 'selected' : ''}>Default Gradient</option>
-          <option value="solid-black" ${settings.wallpaper === 'solid-black' ? 'selected' : ''}>Solid Black</option>
-          <option value="nature" ${settings.wallpaper === 'nature' ? 'selected' : ''}>Nature (Placeholder)</option>
-        </select>
+        <span>Wi-Fi / Red Móvil</span>
+        <input type="checkbox" id="setting-wifi" ${window.powerManager.networkActive ? 'checked' : ''}>
+      </div>
+      <div class="setting-row">
+        <span>Brillo de Pantalla</span>
+        <input type="range" class="range-slider" id="setting-brightness" min="0.1" max="1" step="0.1" value="${window.powerManager.brightness}">
+      </div>
+      <div class="setting-row">
+        <span>PIN de Bloqueo (4 dígitos)</span>
+        <input type="password" id="setting-pin" placeholder="Ninguno" value="${settings.lockPin}" style="width:60px" maxlength="4">
+      </div>
+      <div class="setting-row">
+        <span>Formato 24 Horas</span>
+        <input type="checkbox" id="setting-24h" ${settings.use24h ? 'checked' : ''}>
       </div>
     `;
 
+    // Event Listeners
     this.content.querySelector('#setting-wifi').addEventListener('change', (e) => {
       window.powerManager.setNetwork(e.target.checked);
       document.getElementById('network-icon').style.opacity = e.target.checked ? '1' : '0.3';
     });
+
     this.content.querySelector('#setting-saver').addEventListener('change', (e) => {
       window.powerManager.setBatterySaver(e.target.checked);
+      if (window.showToast) window.showToast(e.target.checked ? 'Ahorro de batería ACTIVADO 🍃' : 'Ahorro de batería DESACTIVADO');
     });
+
+    this.content.querySelector('#setting-charging').addEventListener('change', (e) => {
+      window.powerManager.setCharging(e.target.checked);
+      if (window.showToast) window.showToast(e.target.checked ? 'Cargador Conectado 🔌' : 'Cargador Desconectado');
+    });
+
+    // Power buttons
+    this.content.querySelector('#btn-settings-lock').addEventListener('click', () => {
+      if (window.lockSystem) window.lockSystem();
+    });
+    this.content.querySelector('#btn-settings-restart').addEventListener('click', () => {
+      if (window.restartSystem) window.restartSystem();
+    });
+    this.content.querySelector('#btn-settings-off').addEventListener('click', () => {
+      if (window.powerOffSystem) window.powerOffSystem();
+    });
+
+    // GPS Settings
+    this.content.querySelector('#setting-gps-city').addEventListener('change', (e) => {
+      const cityName = e.target.value;
+      window.hardwareSensors.setCity(cityName);
+      const newGps = window.hardwareSensors.getGPS();
+      this.content.querySelector('#setting-lat').value = newGps.lat;
+      this.content.querySelector('#setting-lng').value = newGps.lng;
+      window.fileSystem.updateSettings({ gpsCity: cityName });
+      window.showToast(`GPS configurado en ${cityName}, Venezuela 📍`);
+    });
+
+    this.content.querySelector('#setting-save-gps').addEventListener('click', () => {
+      const lat = parseFloat(this.content.querySelector('#setting-lat').value);
+      const lng = parseFloat(this.content.querySelector('#setting-lng').value);
+      window.hardwareSensors.setGPS(lat, lng, 'Personalizado Vzla');
+      window.showToast('Coordenadas GPS actualizadas');
+    });
+
     this.content.querySelector('#setting-brightness').addEventListener('input', (e) => {
       const val = parseFloat(e.target.value);
       window.powerManager.setBrightness(val);
       document.getElementById('screen').style.filter = `brightness(${val})`;
-    });
-    this.content.querySelector('#setting-save-gps').addEventListener('click', () => {
-      const lat = parseFloat(this.content.querySelector('#setting-lat').value);
-      const lng = parseFloat(this.content.querySelector('#setting-lng').value);
-      window.hardwareSensors.setGPS(lat, lng);
-      window.showToast('GPS Updated');
     });
 
     this.content.querySelector('#setting-pin').addEventListener('change', (e) => {
@@ -119,15 +192,18 @@ class SettingsApp extends App {
       e.target.value = val;
       window.fileSystem.updateSettings({ lockPin: val });
     });
+
     this.content.querySelector('#setting-24h').addEventListener('change', (e) => {
       window.fileSystem.updateSettings({ use24h: e.target.checked });
-      if (window.updateClock) window.updateClock(); // Force clock update if available
+      if (window.updateClock) window.updateClock();
     });
+
     this.content.querySelector('#setting-color').addEventListener('input', (e) => {
       const color = e.target.value;
       window.fileSystem.updateSettings({ accentColor: color });
       document.documentElement.style.setProperty('--accent-color', color);
     });
+
     this.content.querySelector('#setting-theme').addEventListener('change', (e) => {
       const theme = e.target.value;
       window.fileSystem.updateSettings({ theme });
@@ -135,17 +211,19 @@ class SettingsApp extends App {
       screen.classList.remove('theme-light', 'theme-dark');
       screen.classList.add(`theme-${theme}`);
     });
+
     this.content.querySelector('#setting-wallpaper').addEventListener('change', (e) => {
       const wallpaper = e.target.value;
       window.fileSystem.updateSettings({ wallpaper });
       window.applyWallpaper(wallpaper);
+      window.showToast('Fondo de pantalla floral aplicado 🌸');
     });
   }
 }
 
 class DevOptionsApp extends App {
   constructor() {
-    super('dev-options', 'Developer Options');
+    super('dev-options', 'Opciones de Desarrollador');
     this.updateInterval = null;
   }
   onLaunch() {
@@ -167,18 +245,22 @@ class DevOptionsApp extends App {
   renderStats() {
     const stats = window.processManager.getStats();
     let html = `
+      <div class="stat-box" style="border-left: 4px solid var(--accent-color);">
+        <h3 style="color:var(--accent-color);">🌸 FlowerOS Kernel v1.0</h3>
+        <p style="font-size:11px; opacity:0.8;">Arquitectura Móvil de Procesos & Memoria</p>
+      </div>
       <div class="stat-box">
-        <h3>Memory (RAM)</h3>
+        <h3>Memoria (RAM)</h3>
         <p>Total: ${stats.totalRam} MB</p>
-        <p>Used: ${stats.usedRam} MB (${((stats.usedRam/stats.totalRam)*100).toFixed(1)}%)</p>
+        <p>Usada: ${stats.usedRam} MB (${((stats.usedRam/stats.totalRam)*100).toFixed(1)}%)</p>
       </div>
       <div class="stat-box">
-        <h3>Power</h3>
-        <p>Battery: ${window.powerManager.battery.toFixed(2)}%</p>
-        <p>Saver Mode: ${window.powerManager.batterySaver ? 'ON' : 'OFF'}</p>
+        <h3>Energía & Batería</h3>
+        <p>Nivel: ${window.powerManager.battery.toFixed(2)}%</p>
+        <p>Modo Ahorro: ${window.powerManager.batterySaver ? 'ACTIVADO' : 'DESACTIVADO'}</p>
       </div>
       <div class="stat-box">
-        <h3>App Processes</h3>
+        <h3>Procesos de Aplicaciones</h3>
     `;
     
     for (let id in stats.apps) {
@@ -386,42 +468,9 @@ class BrowserApp extends App {
   }
 }
 
-class WhatsAppWebApp extends App {
-  constructor() {
-    super('whatsapp-web', 'WhatsApp Web');
-  }
-
-  onLaunch() {
-    // Hide header completely to maximize space
-    const header = this.container.querySelector('.app-header');
-    header.style.display = 'none';
-
-    this.content.style.display = 'flex';
-    this.content.style.flexDirection = 'column';
-    this.content.style.height = '100%';
-    this.content.style.padding = '0';
-    this.content.style.overflow = 'hidden';
-
-    this.content.innerHTML = `
-      <div style="position:relative; flex:1; width:100%; height:100%;">
-        <webview 
-          id="whatsapp-view" 
-          src="https://web.whatsapp.com/" 
-          useragent="Mozilla/5.0 (Linux; Android 13; Pixel 6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36" 
-          allowpopups="true" 
-          partition="persist:whatsapp"
-          style="width:100%; height:100%; background:white; border:none; position:absolute; top:0; left:0;"
-        ></webview>
-        <button onclick="window.goHome()" style="position:absolute; top:10px; left:10px; z-index:1000; background:rgba(0,0,0,0.5); color:white; border:none; border-radius:50%; width:40px; height:40px; font-size:20px; cursor:pointer;">✕</button>
-      </div>
-    `;
-  }
-}
-
 class PhoneApp extends App {
   constructor() {
     super('phone', 'Phone');
-    this.timerInterval = null;
   }
   onLaunch() {
     this.renderDialer();
@@ -432,6 +481,9 @@ class PhoneApp extends App {
   renderDialer() {
     this.content.innerHTML = `
       <div class="dialer-container">
+        <div style="background:rgba(0,136,204,0.15); border:1px solid #0088cc; padding:8px 12px; border-radius:10px; font-size:12px; color:#5288c1; text-align:center; margin-bottom:10px;">
+          ✈️ Llamadas de voz y video enrutadas por <strong>Telegram</strong>
+        </div>
         <div id="dialer-display"></div>
         <div class="dialer-pad">
           <button class="dial-btn" data-num="1">1</button>
@@ -449,7 +501,7 @@ class PhoneApp extends App {
         </div>
         <div style="display:flex; gap:20px; align-items:center;">
           <button class="dial-btn" id="btn-backspace" style="font-size:18px;">⌫</button>
-          <button class="dial-btn call-btn" id="btn-call">📞</button>
+          <button class="dial-btn call-btn" id="btn-call" title="Llamar con Telegram">📞</button>
           <button class="dial-btn" style="visibility:hidden;">⌫</button>
         </div>
       </div>
@@ -465,123 +517,62 @@ class PhoneApp extends App {
       display.innerText = display.innerText.slice(0, -1);
     });
     this.content.querySelector('#btn-call').addEventListener('click', () => {
-      const number = display.innerText;
+      const number = display.innerText.trim();
       if (number.length > 0) {
-        this.renderCallScreen(number);
+        this.initiateTelegramCall(number);
+      } else {
+        window.showToast('Ingresa un número para llamar');
       }
     });
   }
-  
-  renderCallScreen(number) {
-    const contacts = window.fileSystem.getContacts();
-    const contact = contacts.find(c => c.number === number);
-    const displayName = contact ? contact.name : number;
-    const displayNum = contact ? number : '';
 
-    this.content.innerHTML = `
-      <div class="call-screen">
-        <div class="call-avatar">👤</div>
-        <div class="call-number">${displayName}</div>
-        <div style="font-size:14px; color:#aaa; margin-bottom:10px;">${displayNum}</div>
-        <div class="call-status" id="call-status">Calling...</div>
-        <div style="flex:1;"></div>
-        <button class="end-call-btn" id="btn-end-call">☎️</button>
-        <div style="height:40px;"></div>
-      </div>
-    `;
-    
-    let seconds = 0;
-    setTimeout(() => {
-      const status = this.content.querySelector('#call-status');
-      if (status) {
-        status.innerText = '00:00';
-        this.timerInterval = setInterval(() => {
-          seconds++;
-          const m = String(Math.floor(seconds / 60)).padStart(2, '0');
-          const s = String(seconds % 60).padStart(2, '0');
-          if (this.content.querySelector('#call-status')) {
-            this.content.querySelector('#call-status').innerText = `${m}:${s}`;
-          }
-        }, 1000);
-      }
-    }, 2000); // Simulate connect after 2s
-
-    this.content.querySelector('#btn-end-call').addEventListener('click', () => {
-      this.endCall();
-    });
-  }
-
-  endCall() {
-    if (this.timerInterval) clearInterval(this.timerInterval);
-    this.renderDialer();
-  }
-
-  onPause() {
-    super.onPause();
-  }
-  onTerminate() {
-    super.onTerminate();
-    if (this.timerInterval) clearInterval(this.timerInterval);
+  initiateTelegramCall(number) {
+    window.showToast(`Conectando llamada a ${number} por Telegram ✈️`);
+    if (window.launchAppWithParams) {
+      window.launchAppWithParams('telegram', { action: 'call', number });
+    }
   }
 }
 
 class MessagesApp extends App {
   constructor() {
     super('messages', 'Messages');
-    this.conversations = window.fileSystem.getConversations();
   }
   onLaunch() {
-    this.conversations = window.fileSystem.getConversations();
     this.renderList();
   }
   onResume() {
     super.onResume();
-    this.conversations = window.fileSystem.getConversations();
     this.renderList();
   }
   renderList() {
-    let html = `
+    this.content.innerHTML = `
       <div class="messages-container">
-        <div style="padding:10px; border-bottom:1px solid rgba(255,255,255,0.1); text-align:center;">
-          <button class="new-msg-btn" id="btn-new-chat">+ New Chat</button>
+        <div style="background:rgba(0,136,204,0.15); border:1px solid #0088cc; padding:12px; border-radius:10px; font-size:12px; color:#5288c1; text-align:center; margin:10px;">
+          ✈️ Mensajería integrada con <strong>Telegram</strong><br>
+          Todas las conversaciones y chats del sistema se realizan mediante Telegram.
         </div>
-        <div class="messages-list">
-    `;
-    if (this.conversations.length === 0) {
-      html += '<p style="color:#aaa; text-align:center; margin-top:20px;">No messages yet.</p>';
-    } else {
-      this.conversations.forEach(conv => {
-        const lastMsg = conv.messages[conv.messages.length - 1];
-        const lastText = lastMsg ? (lastMsg.sender === 'me' ? 'You: ' : '') + lastMsg.text : '';
-        html += `
-          <div class="msg-thread" data-id="${conv.id}">
-            <div class="msg-avatar">${conv.name.charAt(0).toUpperCase()}</div>
-            <div class="msg-info">
-              <div class="msg-name">${conv.name}</div>
-              <div class="msg-preview">${lastText}</div>
-            </div>
-          </div>
-        `;
-      });
-    }
-    html += `
+        <div style="padding:10px; text-align:center;">
+          <button class="btn" id="btn-open-telegram-web" style="background:#0088cc; width:100%; padding:12px; font-weight:bold;">
+            ✈️ Abrir Telegram
+          </button>
+        </div>
+        <div style="padding:10px; text-align:center;">
+          <button class="new-msg-btn" id="btn-new-chat" style="width:100%;">+ Enviar Mensaje a Contacto</button>
         </div>
       </div>
       <div id="new-chat-modal" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:var(--app-bg); z-index:20; flex-direction:column;">
         <div style="padding:15px; border-bottom:1px solid rgba(255,255,255,0.1); font-weight:bold; display:flex; align-items:center;">
           <span style="margin-right:10px; cursor:pointer;" id="btn-close-new-chat">⟵</span>
-          Select Contact
+          Seleccionar Contacto
         </div>
         <div id="new-chat-contacts" style="flex:1; overflow-y:auto;"></div>
       </div>
     `;
-    this.content.innerHTML = html;
 
-    this.content.querySelectorAll('.msg-thread').forEach(thread => {
-      thread.addEventListener('click', () => {
-        this.renderChat(thread.getAttribute('data-id'));
-      });
-    });
+    this.content.querySelector('#btn-open-telegram-web').onclick = () => {
+      if (window.launchAppWithParams) window.launchAppWithParams('telegram', {});
+    };
 
     const newChatBtn = this.content.querySelector('#btn-new-chat');
     if (newChatBtn) {
@@ -589,7 +580,7 @@ class MessagesApp extends App {
         this.renderNewChatModal();
       });
     }
-    
+
     const closeNewChat = this.content.querySelector('#btn-close-new-chat');
     if (closeNewChat) {
       closeNewChat.addEventListener('click', () => {
@@ -603,9 +594,9 @@ class MessagesApp extends App {
     const container = this.content.querySelector('#new-chat-contacts');
     modal.style.display = 'flex';
     const contacts = window.fileSystem.getContacts();
-    
+
     if (contacts.length === 0) {
-      container.innerHTML = '<p style="color:#aaa; text-align:center; margin-top:20px;">No contacts available.</p>';
+      container.innerHTML = '<p style="color:#aaa; text-align:center; margin-top:20px;">No hay contactos guardados.</p>';
       return;
     }
 
@@ -624,80 +615,17 @@ class MessagesApp extends App {
       item.addEventListener('click', () => {
         const name = item.getAttribute('data-name');
         const number = item.getAttribute('data-number');
-        
-        // Check if conversation already exists
-        let conv = this.conversations.find(c => c.number === number);
-        if (!conv) {
-          conv = { id: Date.now().toString(), name, number, messages: [] };
-          this.conversations.push(conv);
-          window.fileSystem.saveConversations(this.conversations);
-        }
         modal.style.display = 'none';
-        this.renderChat(conv.id);
+        this.initiateTelegramChat(number, name);
       });
     });
   }
 
-
-  renderChat(id) {
-    const conv = this.conversations.find(c => c.id === id);
-    let html = `
-      <div class="chat-view">
-        <div style="padding:10px; border-bottom:1px solid rgba(255,255,255,0.1); font-weight:bold; display:flex; align-items:center;">
-          <span style="margin-right:10px; cursor:pointer;" id="btn-back-msgs">⟵</span>
-          ${conv.name}
-        </div>
-        <div class="chat-messages" id="chat-messages">
-    `;
-    conv.messages.forEach(msg => {
-      html += `<div class="chat-bubble ${msg.sender === 'me' ? 'sent' : 'received'}">${msg.text}</div>`;
-    });
-    html += `
-        </div>
-        <div class="chat-input-area">
-          <input type="text" id="chat-input" placeholder="Type message...">
-          <button id="btn-send-msg">➤</button>
-        </div>
-      </div>
-    `;
-    this.content.innerHTML = html;
-
-    const messagesContainer = this.content.querySelector('#chat-messages');
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-    this.content.querySelector('#btn-back-msgs').addEventListener('click', () => {
-      this.renderList();
-    });
-
-    const sendMsg = () => {
-      const input = this.content.querySelector('#chat-input');
-      const text = input.value.trim();
-      if (text) {
-        conv.messages.push({ sender: 'me', text });
-        window.fileSystem.saveConversations(this.conversations);
-        input.value = '';
-        this.renderChat(id);
-        
-        // Bot reply logic
-        setTimeout(() => {
-          conv.messages.push({ sender: 'them', text: 'Ok sounds good!' });
-          window.fileSystem.saveConversations(this.conversations);
-          if (this.content.querySelector('#chat-messages')) {
-            this.renderChat(id); // Re-render if still in chat
-          }
-          // Also show notification on lock screen if locked
-          if (document.getElementById('lock-screen').classList.contains('active')) {
-            const notif = document.getElementById('lock-notif-msg');
-            if (notif) notif.style.display = 'flex';
-          }
-        }, 3000);
-      }
-    };
-
-    this.content.querySelector('#btn-send-msg').addEventListener('click', sendMsg);
-    this.content.querySelector('#chat-input').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') sendMsg();
-    });
+  initiateTelegramChat(number, name) {
+    window.showToast(`Abriendo chat con ${name || number} en Telegram ✈️`);
+    if (window.launchAppWithParams) {
+      window.launchAppWithParams('telegram', { action: 'chat', number, name });
+    }
   }
 }
 
@@ -765,6 +693,9 @@ class ContactsApp extends App {
             <button class="action-btn" id="btn-msg-contact">
               💬<span>Message</span>
             </button>
+            <button class="action-btn" id="btn-tg-contact" style="background:#0088cc;">
+              ✈️<span>Telegram</span>
+            </button>
             <button class="action-btn" id="btn-delete-contact" style="background:#e74c3c;">
               🗑️<span>Delete</span>
             </button>
@@ -773,79 +704,59 @@ class ContactsApp extends App {
       </div>
     `;
     this.content.innerHTML = html;
+    
+    this.content.querySelector('#btn-add-contact').addEventListener('click', () => {
+      this.content.querySelector('#contact-form-view').style.display = 'flex';
+    });
+    this.content.querySelector('#btn-close-form').addEventListener('click', () => {
+      this.content.querySelector('#contact-form-view').style.display = 'none';
+    });
+    this.content.querySelector('#btn-save-contact').addEventListener('click', () => {
+      const name = this.content.querySelector('#contact-name').value.trim();
+      const number = this.content.querySelector('#contact-number').value.trim();
+      if (name && number) {
+        window.fileSystem.addContact(name, number);
+        this.content.querySelector('#contact-form-view').style.display = 'none';
+        this.renderList();
+      } else {
+        window.showToast('Please fill all fields');
+      }
+    });
 
+    // Contact item clicks
     this.content.querySelectorAll('.contact-item').forEach(item => {
       item.addEventListener('click', () => {
-        this.renderDetail(item.getAttribute('data-id'));
+        const id = item.getAttribute('data-id');
+        const contact = window.fileSystem.getContacts().find(c => c.id === id);
+        if (contact) {
+          const detail = this.content.querySelector('#contact-detail-view');
+          detail.querySelector('#detail-avatar').innerText = contact.name.charAt(0).toUpperCase();
+          detail.querySelector('#detail-name').innerText = contact.name;
+          detail.querySelector('#detail-number').innerText = contact.number;
+          
+          detail.querySelector('#btn-call-contact').onclick = () => {
+            if (window.launchAppWithParams) window.launchAppWithParams('phone', { action: 'call', number: contact.number });
+          };
+          detail.querySelector('#btn-msg-contact').onclick = () => {
+            if (window.launchAppWithParams) window.launchAppWithParams('messages', { action: 'chat', number: contact.number, name: contact.name });
+          };
+          detail.querySelector('#btn-tg-contact').onclick = () => {
+            if (window.launchAppWithParams) window.launchAppWithParams('telegram', { action: 'chat', number: contact.number, name: contact.name });
+          };
+          detail.querySelector('#btn-delete-contact').onclick = () => {
+            window.fileSystem.deleteContact(id);
+            detail.style.display = 'none';
+            this.renderList();
+          };
+          
+          detail.style.display = 'flex';
+        }
       });
     });
 
-    const addBtn = this.content.querySelector('#btn-add-contact');
-    if (addBtn) {
-      addBtn.addEventListener('click', () => {
-        this.content.querySelector('#contact-form-view').style.display = 'flex';
-        this.content.querySelector('#contact-name').value = '';
-        this.content.querySelector('#contact-number').value = '';
-      });
-    }
-
-    const closeFormBtn = this.content.querySelector('#btn-close-form');
-    if (closeFormBtn) {
-      closeFormBtn.addEventListener('click', () => {
-        this.content.querySelector('#contact-form-view').style.display = 'none';
-      });
-    }
-
-    const saveBtn = this.content.querySelector('#btn-save-contact');
-    if (saveBtn) {
-      saveBtn.addEventListener('click', () => {
-        const name = this.content.querySelector('#contact-name').value.trim();
-        const number = this.content.querySelector('#contact-number').value.trim();
-        if (name && number) {
-          window.fileSystem.addContact(name, number);
-          window.showToast('Contact saved');
-          this.content.querySelector('#contact-form-view').style.display = 'none';
-          this.renderList();
-        } else {
-          window.showToast('Please enter name and number');
-        }
-      });
-    }
-  }
-
-  renderDetail(id) {
-    const contact = window.fileSystem.getContacts().find(c => c.id === id);
-    if (!contact) return;
-
-    const detailView = this.content.querySelector('#contact-detail-view');
-    detailView.style.display = 'flex';
-    
-    this.content.querySelector('#detail-avatar').innerText = contact.name.charAt(0).toUpperCase();
-    this.content.querySelector('#detail-name').innerText = contact.name;
-    this.content.querySelector('#detail-number').innerText = contact.number;
-
-    this.content.querySelector('#btn-close-detail').onclick = () => {
-      detailView.style.display = 'none';
-    };
-
-    this.content.querySelector('#btn-delete-contact').onclick = () => {
-      window.fileSystem.deleteContact(id);
-      window.showToast('Contact deleted');
-      detailView.style.display = 'none';
-      this.renderList();
-    };
-    
-    this.content.querySelector('#btn-call-contact').onclick = () => {
-      if (window.launchAppWithParams) {
-        window.launchAppWithParams('phone', { action: 'call', number: contact.number });
-      }
-    };
-    
-    this.content.querySelector('#btn-msg-contact').onclick = () => {
-      if (window.launchAppWithParams) {
-        window.launchAppWithParams('messages', { action: 'chat', number: contact.number, name: contact.name });
-      }
-    };
+    this.content.querySelector('#btn-close-detail').addEventListener('click', () => {
+      this.content.querySelector('#contact-detail-view').style.display = 'none';
+    });
   }
 }
 
@@ -1368,6 +1279,240 @@ class CalendarApp extends App {
   }
 }
 
+class TelegramApp extends App {
+  constructor() {
+    super('telegram', 'Telegram');
+    this.currentUrl = 'https://web.telegram.org/';
+  }
+
+  onLaunch() {
+    this.renderWebview();
+  }
+
+  renderWebview() {
+    // Hide default header to maximize space
+    const header = this.container.querySelector('.app-header');
+    if (header) header.style.display = 'none';
+
+    this.content.style.display = 'flex';
+    this.content.style.flexDirection = 'column';
+    this.content.style.height = '100%';
+    this.content.style.padding = '0';
+    this.content.style.overflow = 'hidden';
+
+    this.content.innerHTML = `
+      <div class="telegram-app-container">
+        <div class="telegram-toolbar">
+          <button class="telegram-toolbar-btn" id="tg-btn-home" title="Inicio FlowerOS">🌸 Home</button>
+          <button class="telegram-toolbar-btn" id="tg-btn-reload" title="Recargar Telegram">🔄 Recargar</button>
+          <div style="flex:1;"></div>
+          <span style="font-size:11px; color:#5288c1; font-weight:bold;">✈️ Telegram</span>
+        </div>
+        <div style="position:relative; flex:1; width:100%; height:100%;">
+          <webview 
+            id="telegram-view" 
+            src="${this.currentUrl}" 
+            useragent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36" 
+            allowpopups="true" 
+            partition="persist:telegram"
+            style="width:100%; height:100%; background:#17212b; border:none;"
+          ></webview>
+        </div>
+      </div>
+    `;
+
+    this.content.querySelector('#tg-btn-home').onclick = () => {
+      window.goHome();
+    };
+
+    this.content.querySelector('#tg-btn-reload').onclick = () => {
+      const view = this.content.querySelector('#telegram-view');
+      if (view) view.reload();
+    };
+  }
+
+  openContact(number, name) {
+    const cleanNum = (number || '').replace(/[^0-9+]/g, '');
+    const view = this.content.querySelector('#telegram-view');
+    if (cleanNum) {
+      const tgUrl = cleanNum.startsWith('+') 
+        ? `https://t.me/${cleanNum}` 
+        : `https://web.telegram.org/k/#?phone=${cleanNum}`;
+      if (view) view.src = tgUrl;
+      window.showToast(`Conectando con ${name || cleanNum} en Telegram...`);
+    }
+  }
+}
+
+class GPSApp extends App {
+  constructor() {
+    super('gps', 'GPS Venezuela');
+  }
+
+  onLaunch() {
+    this.renderGPSMain();
+  }
+
+  renderGPSMain() {
+    const gps = window.hardwareSensors.getGPS();
+    const cities = window.hardwareSensors.getVenezuelaCities();
+
+    let cityOpts = '';
+    for (let cName in cities) {
+      const selected = (cName === gps.city) ? 'selected' : '';
+      cityOpts += `<option value="${cName}" ${selected}>📍 ${cName} (${cities[cName].state})</option>`;
+    }
+
+    this.content.innerHTML = `
+      <div class="gps-container">
+        <div class="gps-header">
+          <div class="gps-title">📍 GPS & Mapas Venezuela</div>
+          <div class="gps-subtitle">Navegación & Telemetría Satelital</div>
+        </div>
+
+        <div class="gps-city-picker">
+          <label style="font-size:12px; font-weight:bold;">Seleccionar Ciudad Vzla:</label>
+          <select id="gps-city-select" class="gps-select">
+            ${cityOpts}
+          </select>
+        </div>
+
+        <!-- Interactive Map Canvas / SVG -->
+        <div class="gps-map-card">
+          <div class="gps-map-canvas-wrapper" id="gps-map-box">
+            <svg class="gps-map-svg" viewBox="0 0 400 240">
+              <!-- Venezuela Border Sketch -->
+              <path d="M 40,90 Q 70,30 140,25 Q 220,20 310,40 Q 360,90 350,160 Q 300,210 210,215 Q 120,210 60,160 Z" fill="rgba(0,136,204,0.15)" stroke="#0088cc" stroke-width="2" />
+              <!-- Lake Maracaibo -->
+              <ellipse cx="90" cy="75" rx="18" ry="25" fill="rgba(9,132,227,0.4)" stroke="#74b9ff" stroke-width="1" />
+              <!-- Orinoco River Line -->
+              <path d="M 120,150 Q 200,165 330,130" fill="none" stroke="#74b9ff" stroke-width="2" stroke-dasharray="4,2" />
+              
+              <!-- City Markers -->
+              <g id="svg-city-markers">
+                <circle cx="190" cy="55" r="5" fill="#e74c3c" /><text x="190" y="45" font-size="9" fill="white" text-anchor="middle">Caracas</text>
+                <circle cx="160" cy="70" r="5" fill="#f1c40f" /><text x="160" y="62" font-size="9" fill="white" text-anchor="middle">Valencia</text>
+                <circle cx="90" cy="65" r="5" fill="#e67e22" /><text x="90" y="55" font-size="9" fill="white" text-anchor="middle">Maracaibo</text>
+                <circle cx="140" cy="85" r="5" fill="#2ecc71" /><text x="140" y="98" font-size="9" fill="white" text-anchor="middle">Barquisimeto</text>
+                <circle cx="110" cy="115" r="5" fill="#9b59b6" /><text x="110" y="128" font-size="9" fill="white" text-anchor="middle">Mérida</text>
+                <circle cx="260" cy="65" r="5" fill="#1abc9c" /><text x="260" y="55" font-size="9" fill="white" text-anchor="middle">Puerto La Cruz</text>
+                <circle cx="280" cy="135" r="5" fill="#34495e" /><text x="280" y="148" font-size="9" fill="white" text-anchor="middle">Ciudad Guayana</text>
+              </g>
+
+              <!-- Target Pulsing Pin -->
+              <circle id="map-target-pin" cx="190" cy="55" r="8" fill="var(--accent-color)" opacity="0.8">
+                <animate attributeName="r" values="6;12;6" dur="2s" repeatCount="indefinite" />
+              </circle>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Telemetry Data Cards -->
+        <div class="gps-telemetry-grid">
+          <div class="gps-card">
+            <div class="gps-card-title">Latitud</div>
+            <div class="gps-card-val" id="gps-val-lat">${gps.lat}° N</div>
+          </div>
+          <div class="gps-card">
+            <div class="gps-card-title">Longitud</div>
+            <div class="gps-card-val" id="gps-val-lng">${gps.lng}° W</div>
+          </div>
+          <div class="gps-card">
+            <div class="gps-card-title">Estado</div>
+            <div class="gps-card-val" id="gps-val-state">${gps.state}</div>
+          </div>
+          <div class="gps-card">
+            <div class="gps-card-title">Altitud</div>
+            <div class="gps-card-val" id="gps-val-alt">${gps.alt || '450m'}</div>
+          </div>
+        </div>
+
+        <div class="gps-status-bar">
+          <span>🛰️ Satélites: 5/5</span>
+          <span>Precisión: ${gps.accuracy}</span>
+          <span>${gps.isReal ? 'GPS Sensor Real' : 'Aproximado Vzla'}</span>
+        </div>
+
+        <!-- Route Finder -->
+        <div class="gps-route-box">
+          <div style="font-weight:bold; margin-bottom:8px;">🚗 Calculador de Ruta en Venezuela</div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <select id="route-from" class="gps-select" style="flex:1;">
+              <option value="Caracas">Caracas</option>
+              <option value="Valencia">Valencia</option>
+              <option value="Maracaibo">Maracaibo</option>
+            </select>
+            <span>➡️</span>
+            <select id="route-to" class="gps-select" style="flex:1;">
+              <option value="Mérida">Mérida</option>
+              <option value="Puerto La Cruz">Puerto La Cruz</option>
+              <option value="Barquisimeto">Barquisimeto</option>
+            </select>
+          </div>
+          <button class="btn" id="btn-calc-route" style="width:100%; margin-top:8px;">Calcular Distancia & Tiempo</button>
+          <div id="route-results" style="margin-top:8px; font-size:12px; color:#aaa; text-align:center;"></div>
+        </div>
+      </div>
+    `;
+
+    const cityCoordsSVG = {
+      'Caracas': { cx: 190, cy: 55 },
+      'Valencia': { cx: 160, cy: 70 },
+      'Maracaibo': { cx: 90, cy: 65 },
+      'Barquisimeto': { cx: 140, cy: 85 },
+      'Mérida': { cx: 110, cy: 115 },
+      'Puerto La Cruz': { cx: 260, cy: 65 },
+      'Ciudad Guayana': { cx: 280, cy: 135 },
+      'San Cristóbal': { cx: 80, cy: 130 }
+    };
+
+    const updatePin = (cityName) => {
+      const pin = this.content.querySelector('#map-target-pin');
+      if (pin && cityCoordsSVG[cityName]) {
+        pin.setAttribute('cx', cityCoordsSVG[cityName].cx);
+        pin.setAttribute('cy', cityCoordsSVG[cityName].cy);
+      }
+    };
+
+    updatePin(gps.city);
+
+    this.content.querySelector('#gps-city-select').onchange = (e) => {
+      const selectedCity = e.target.value;
+      window.hardwareSensors.setCity(selectedCity);
+      const newGps = window.hardwareSensors.getGPS();
+      this.content.querySelector('#gps-val-lat').innerText = `${newGps.lat}° N`;
+      this.content.querySelector('#gps-val-lng').innerText = `${newGps.lng}° W`;
+      this.content.querySelector('#gps-val-state').innerText = newGps.state;
+      this.content.querySelector('#gps-val-alt').innerText = newGps.alt || '450m';
+      updatePin(selectedCity);
+      window.showToast(`GPS centrado en ${selectedCity}, Venezuela 📍`);
+    };
+
+    this.content.querySelector('#btn-calc-route').onclick = () => {
+      const from = this.content.querySelector('#route-from').value;
+      const to = this.content.querySelector('#route-to').value;
+      
+      const routesDist = {
+        'Caracas-Mérida': { dist: 675, time: '9h 15m', road: 'Autopista ARC / Troncal 5' },
+        'Caracas-Valencia': { dist: 160, time: '2h 10m', road: 'Autopista Regional del Centro' },
+        'Caracas-Puerto La Cruz': { dist: 320, time: '4h 30m', road: 'Troncal 9' },
+        'Valencia-Maracaibo': { dist: 510, time: '6h 45m', road: 'Lara-Zulia' },
+        'Valencia-Barquisimeto': { dist: 220, time: '2h 50m', road: 'Autopista Cimarrón Andresote' }
+      };
+
+      const key1 = `${from}-${to}`;
+      const key2 = `${to}-${from}`;
+      const info = routesDist[key1] || routesDist[key2] || { dist: 450, time: '6h 00m', road: 'Carretera Nacional Venezuela' };
+
+      this.content.querySelector('#route-results').innerHTML = `
+        <strong style="color:var(--accent-color);">${from} ➡️ ${to}</strong><br>
+        📏 Distancia: <strong>${info.dist} km</strong> | ⏱️ Tiempo: <strong>${info.time}</strong><br>
+        🛣️ Vía: ${info.road}
+      `;
+    };
+  }
+}
+
 window.Apps = {
   SettingsApp,
   DevOptionsApp,
@@ -1375,12 +1520,13 @@ window.Apps = {
   CameraApp,
   GalleryApp,
   BrowserApp,
-  WhatsAppWebApp,
   PhoneApp,
   MessagesApp,
   ContactsApp,
   MusicApp,
   ClockApp,
   CalculatorApp,
-  CalendarApp
+  CalendarApp,
+  TelegramApp,
+  GPSApp
 };
